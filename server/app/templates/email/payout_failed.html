@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #eee;
+            color: #d32f2f;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .details {
+            background-color: #ffebee;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .action-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1976d2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>❌ Payout Failed</h2>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ professional.name }},</p>
+        
+        <p>Unfortunately, your payout could not be processed. Here are the details:</p>
+        
+        <div class="details">
+            <p><strong>Payout ID:</strong> {{ payout_id }}</p>
+            <p><strong>Amount:</strong> {{ amount }} {{ currency }}</p>
+            <p><strong>Date:</strong> {{ date }}</p>
+            <p><strong>Error:</strong> {{ error }}</p>
+        </div>
+
+        <p>Common reasons for payout failure include:</p>
+        <ul>
+            <li>Invalid bank account information</li>
+            <li>Bank account verification issues</li>
+            <li>Bank system maintenance</li>
+            <li>Regulatory compliance checks</li>
+        </ul>
+
+        <p>Please verify your bank account information in your profile settings and try requesting the payout again. If you continue to experience issues, please contact our support team for assistance.</p>
+        
+        <a href="{{ dashboard_url }}" class="action-button">Go to Dashboard</a>
+    </div>
+    
+    <div class="footer">
+        <p>Need help? Contact our support team</p>
+        <p>© 2024 Fitness Tracker. All rights reserved.</p>
+    </div>
+</body>
+</html>

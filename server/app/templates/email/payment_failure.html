@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #eee;
+            color: #d32f2f;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .details {
+            background-color: #ffebee;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .action-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1976d2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>⚠️ Payment Failed</h2>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ client.name }},</p>
+        
+        <p>Unfortunately, your payment could not be processed. Here are the details:</p>
+        
+        <div class="details">
+            <p><strong>Payment ID:</strong> {{ payment_id }}</p>
+            <p><strong>Amount:</strong> {{ amount }} {{ currency }}</p>
+            <p><strong>Date:</strong> {{ date }}</p>
+            <p><strong>Error:</strong> {{ error }}</p>
+        </div>
+
+        <p>Common reasons for payment failure include:</p>
+        <ul>
+            <li>Insufficient funds</li>
+            <li>Expired card</li>
+            <li>Incorrect card information</li>
+            <li>Bank declining the transaction</li>
+        </ul>
+
+        <p>Please verify your payment information and try again. If you continue to experience issues, contact your bank or our support team for assistance.</p>
+        
+        <a href="{{ retry_payment_url }}" class="action-button">Try Payment Again</a>
+    </div>
+    
+    <div class="footer">
+        <p>Need help? Contact our support team</p>
+        <p>© 2024 Fitness Tracker. All rights reserved.</p>
+    </div>
+</body>
+</html>

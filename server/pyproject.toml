@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "fitness-tracker-server"
+version = "0.1.0"
+description = "Fitness Tracker Backend Server"
+authors = ["Your Name <your.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.68.0"
+uvicorn = "^0.15.0"
+sqlalchemy = "^1.4.23"
+pydantic = "^1.8.2"
+python-multipart = "^0.0.5"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+torch = "^2.0.0"
+opencv-python = "^4.5.3"
+numpy = "^1.21.2"
+transformers = "^4.31.0"
+python-dotenv = "^0.19.0"
+alembic = "^1.7.3"
+psycopg2-binary = "^2.9.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest-asyncio = "^0.15.1"
+black = "^21.7b0"
+isort = "^5.9.3"
+flake8 = "^3.9.2"
+mypy = "^0.910"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3

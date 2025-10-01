@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #eee;
+            color: #ff9800;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .details {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .action-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1976d2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>⚠️ Low Balance Alert</h2>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ professional.name }},</p>
+        
+        <p>Your account balance is running low. Here are the details:</p>
+        
+        <div class="details">
+            <p><strong>Current Balance:</strong> {{ current_balance }} {{ currency }}</p>
+            <p><strong>Low Balance Threshold:</strong> {{ threshold }} {{ currency }}</p>
+        </div>
+
+        <p>To ensure uninterrupted service for your clients, we recommend topping up your balance soon.</p>
+        
+        <p>You can add funds to your account through your professional dashboard or contact our support team for assistance.</p>
+        
+        <a href="{{ dashboard_url }}" class="action-button">Go to Dashboard</a>
+    </div>
+    
+    <div class="footer">
+        <p>Need help? Contact our support team</p>
+        <p>© 2024 Fitness Tracker. All rights reserved.</p>
+    </div>
+</body>
+</html>
