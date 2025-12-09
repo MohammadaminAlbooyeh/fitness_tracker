@@ -7,29 +7,8 @@ from ..schemas import schemas
 
 router = APIRouter()
 
-# Exercise endpoints
-@router.get("/exercises", response_model=List[schemas.Exercise])
-def get_exercises(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db)
-):
-    exercises = db.query(models.Exercise).offset(skip).limit(limit).all()
-    return exercises
-
-@router.post("/exercises", response_model=schemas.Exercise)
-def create_exercise(
-    exercise: schemas.ExerciseCreate,
-    db: Session = Depends(get_db)
-):
-    db_exercise = models.Exercise(**exercise.dict())
-    db.add(db_exercise)
-    db.commit()
-    db.refresh(db_exercise)
-    return db_exercise
-
 # Workout endpoints
-@router.get("/workouts", response_model=List[schemas.Workout])
+@router.get("/", response_model=List[schemas.Workout])
 def get_workouts(
     skip: int = 0,
     limit: int = 100,
@@ -38,7 +17,7 @@ def get_workouts(
     workouts = db.query(models.Workout).offset(skip).limit(limit).all()
     return workouts
 
-@router.post("/workouts", response_model=schemas.Workout)
+@router.post("/", response_model=schemas.Workout)
 def create_workout(
     workout: schemas.WorkoutCreate,
     db: Session = Depends(get_db)
@@ -65,7 +44,7 @@ def create_workout(
     return db_workout
 
 # Workout log endpoints
-@router.post("/workout-logs", response_model=schemas.WorkoutLog)
+@router.post("/logs", response_model=schemas.WorkoutLog)
 def log_workout(
     log: schemas.WorkoutLogCreate,
     db: Session = Depends(get_db)
@@ -76,7 +55,7 @@ def log_workout(
     db.refresh(db_log)
     return db_log
 
-@router.get("/workout-logs", response_model=List[schemas.WorkoutLog])
+@router.get("/logs", response_model=List[schemas.WorkoutLog])
 def get_workout_logs(
     skip: int = 0,
     limit: int = 100,

@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime, timedelta
-from app.db.session import get_db
-from app.core.auth import get_current_user
+from ..database.database import get_db
+from ..utils.auth import get_current_user
 from app.models.user import User
 from app.models.progress_tracking import (
     UserMeasurement,

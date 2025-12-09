@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from app.db.session import get_db
-from app.core.auth import get_current_user
+from app.database.database import get_db
+from app.utils.auth import get_current_user
 from app.models.user import User
 from app.models.exercise_library import Exercise, Equipment, Muscle, ExerciseProgress
 from app.schemas.exercise_library import (

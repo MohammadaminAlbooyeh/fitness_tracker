@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 
-from ..database import get_db
+from ..database.database import get_db
 from ..models.social import Challenge, ChallengeActivity, Post, PostLike, PostComment
 from ..models.user import User
 from ..schemas.social import (
@@ -16,7 +16,7 @@ from ..schemas.social import (
     CommentResponse,
     UserResponse
 )
-from ..auth import get_current_user
+from ..utils.auth import get_current_user
 
 router = APIRouter()
 

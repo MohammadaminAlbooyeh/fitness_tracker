@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime, timedelta
 
-from ..database import get_db
+from ..database.database import get_db
 from ..models.workout_planning import WorkoutTemplate, ScheduledWorkout, WorkoutReminder
 from ..models.user import User
 from ..schemas.workout_planning import (
@@ -14,7 +14,7 @@ from ..schemas.workout_planning import (
     ReminderCreate,
     ReminderResponse
 )
-from ..auth import get_current_user
+from ..utils.auth import get_current_user
 from ..services.reminder_service import schedule_reminder
 
 router = APIRouter()
