@@ -4,15 +4,15 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 from ..database.database import get_db
 from ..utils.auth import get_current_user
-from app.models.user import User
-from app.models.progress_tracking import (
+from ..models.user import User
+from ..models.progress_tracking import (
     UserMeasurement,
     ProgressPhoto,
     Achievement,
     UserAchievement,
     PerformanceMetric
 )
-from app.schemas.progress_tracking import (
+from ..schemas.progress_tracking import (
     MeasurementCreate,
     Measurement,
     ProgressPhotoCreate,
@@ -23,7 +23,7 @@ from app.schemas.progress_tracking import (
     PerformanceMetric as PerformanceMetricSchema,
     ProgressSummary
 )
-from app.core.storage import upload_file
+from ..core.storage import upload_file
 from sqlalchemy import func
 
 router = APIRouter()

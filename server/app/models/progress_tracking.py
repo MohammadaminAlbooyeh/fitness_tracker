@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey, Enum, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.db.base_class import Base
+from ..database.database import Base
 import enum
 
 class MeasurementType(str, enum.Enum):

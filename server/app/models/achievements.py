@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
-from app.db.base_class import Base
+from ..database.database import Base
 
 class Achievement(Base):
     __tablename__ = "achievements"

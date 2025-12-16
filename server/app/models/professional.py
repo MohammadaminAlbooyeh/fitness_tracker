@@ -4,7 +4,7 @@ from datetime import datetime
 import enum
 from typing import Optional
 
-from app.db.base_class import Base
+from ..database.database import Base
 
 # Many-to-many relationship tables
 professional_specializations = Table(

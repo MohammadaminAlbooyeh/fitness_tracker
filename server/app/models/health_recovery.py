@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey, Enu
 from sqlalchemy.orm import relationship
 from datetime import datetime
 import enum
-from app.db.base_class import Base
+from ..database.database import Base
 
 class SleepQuality(str, enum.Enum):
     POOR = "poor"

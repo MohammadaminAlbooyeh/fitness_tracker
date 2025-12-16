@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from app.database.database import get_db
-from app.utils.auth import get_current_user
-from app.models.user import User
-from app.models.exercise_library import Exercise, Equipment, Muscle, ExerciseProgress
-from app.schemas.exercise_library import (
+from ..database.database import get_db
+from ..utils.auth import get_current_user
+from ..models.user import User
+from ..models.exercise_library import Exercise, Equipment, Muscle, ExerciseProgress
+from ..schemas.exercise_library import (
     Exercise as ExerciseSchema,
     ExerciseCreate,
     Equipment as EquipmentSchema,
@@ -15,7 +15,7 @@ from app.schemas.exercise_library import (
     ExerciseProgress as ExerciseProgressSchema,
     ExerciseProgressCreate
 )
-from app.core.storage import upload_file
+from ..core.storage import upload_file
 from sqlalchemy import and_, or_
 
 router = APIRouter()

@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Table, Float, Boolean
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Table, Float, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.db.base_class import Base
+from ..database.database import Base
 from typing import List
 
 # Association table for exercise equipment
