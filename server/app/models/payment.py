@@ -94,7 +94,7 @@ class PaymentMethod(Base):
     card_exp_month = Column(Integer)
     card_exp_year = Column(Integer)
     is_default = Column(Boolean, default=False)
-    metadata = Column(JSON)
+    extra_data = Column(JSON)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

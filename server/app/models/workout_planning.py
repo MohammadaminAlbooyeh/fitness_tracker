@@ -28,7 +28,7 @@ class WorkoutTemplate(Base):
     estimated_duration = Column(Integer)  # Duration in minutes
     is_public = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    metadata = Column(JSON)  # For storing additional template data
+    extra_data = Column(JSON)  # For storing additional template data
 
     # Relationships
     user = relationship("User", back_populates="workout_templates")

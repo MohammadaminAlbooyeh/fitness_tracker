@@ -46,7 +46,7 @@ class Event(Base):
     created_by = Column(Integer, ForeignKey("users.id"), nullable=False)
     recurrence_id = Column(Integer, ForeignKey("recurrence_patterns.id"))
     is_cancelled = Column(Boolean, default=False)
-    metadata = Column(JSONB)  # For storing event-specific data (workout details, class info, etc.)
+    extra_data = Column(JSONB)  # For storing event-specific data (workout details, class info, etc.)
 
     # Relationships
     creator = relationship("User", back_populates="created_events", foreign_keys=[created_by])
