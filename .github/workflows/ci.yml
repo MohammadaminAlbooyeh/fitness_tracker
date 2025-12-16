@@ -44,6 +44,12 @@ jobs:
         # do not attempt to install the project package root (project has no packages entry)
         poetry install --no-root
 
+    - name: Install email-validator in poetry env
+      run: |
+        cd server
+        # ensure email-validator is available for pydantic email types
+        poetry run pip install email-validator
+
     - name: Run server tests
       run: |
         cd server
