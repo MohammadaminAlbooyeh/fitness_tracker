@@ -43,29 +43,7 @@ class ProgressPhoto(Base):
     # Relationships
     user = relationship("User", back_populates="progress_photos")
 
-class Achievement(Base):
-    __tablename__ = 'achievements'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-    description = Column(String(500))
-    icon_url = Column(String(255))
-    category = Column(String(50))  # workout, progress, nutrition, etc.
-    criteria = Column(JSON)  # Achievement criteria in JSON format
-    points = Column(Integer, default=0)
-
-class UserAchievement(Base):
-    __tablename__ = 'user_achievements'
-
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    achievement_id = Column(Integer, ForeignKey('achievements.id'), nullable=False)
-    earned_date = Column(DateTime, default=datetime.utcnow)
-    progress = Column(JSON)  # Current progress towards achievement
-
-    # Relationships
-    user = relationship("User", back_populates="achievements")
-    achievement = relationship("Achievement")
+# Note: Achievement and UserAchievement models are defined in achievements.py
 
 class PerformanceMetric(Base):
     __tablename__ = 'performance_metrics'

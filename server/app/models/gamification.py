@@ -3,27 +3,8 @@ from sqlalchemy.orm import relationship
 from ..database.database import Base
 from datetime import datetime
 
-# Association table for user achievements
-user_achievements = Table(
-    'user_achievements',
-    Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('achievement_id', Integer, ForeignKey('achievements.id')),
-    Column('earned_at', DateTime, default=datetime.utcnow)
-)
-
-class Achievement(Base):
-    __tablename__ = "achievements"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
-    icon = Column(String)  # URL or icon name
-    requirement = Column(String)  # JSON string containing achievement criteria
-    points = Column(Integer, default=0)
-    
-    # Relationships
-    users = relationship("User", secondary=user_achievements, back_populates="achievements")
+# Note: Achievement model is defined in achievements.py
+# Importing here would cause circular dependency, so routes should import from achievements
 
 class UserStreak(Base):
     __tablename__ = "user_streaks"
