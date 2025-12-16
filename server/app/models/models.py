@@ -4,16 +4,6 @@ from ..database.database import Base
 from datetime import datetime
 from .user import User
 
-class Exercise(Base):
-    __tablename__ = "exercises"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
-    category = Column(String)  # e.g., 'strength', 'cardio', 'flexibility'
-    
-    workout_exercises = relationship("WorkoutExercise", back_populates="exercise")
-
 class Workout(Base):
     __tablename__ = "workouts"
 
