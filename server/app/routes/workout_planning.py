@@ -15,7 +15,7 @@ from ..schemas.workout_planning import (
     ReminderResponse
 )
 from ..utils.auth import get_current_user
-from ..services.reminder_service import schedule_reminder
+# from ..services.reminder_service import schedule_reminder  # TODO: Implement reminder service
 
 router = APIRouter()
 
@@ -98,7 +98,7 @@ async def schedule_workout(
         db.commit()
         
         # Schedule the reminder in the background task
-        schedule_reminder(reminder)
+        # schedule_reminder(reminder)  # TODO: Implement reminder service
     
     return db_scheduled
 
@@ -164,7 +164,7 @@ async def reschedule_workout(
         ).first()
         if reminder:
             reminder.reminder_time = new_date - timedelta(hours=1)  # Default 1 hour before
-            schedule_reminder(reminder)
+            # schedule_reminder(reminder)  # TODO: Implement reminder service
     
     db.commit()
     return {"message": "Workout rescheduled successfully"}
