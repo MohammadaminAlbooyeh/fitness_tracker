@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 from app.database.database import Base
-from .gamification import user_achievements
+from .achievements import user_achievements
 
 class User(Base):
     __tablename__ = "users"

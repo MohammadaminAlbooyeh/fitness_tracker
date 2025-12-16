@@ -1,8 +1,17 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
 from ..database.database import Base
+
+# Association table for user achievements
+user_achievements = Table(
+    'user_achievements',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('achievement_id', Integer, ForeignKey('achievements.id'), primary_key=True),
+    Column('date_completed', DateTime, nullable=True)
+)
 
 class Achievement(Base):
     __tablename__ = "achievements"
