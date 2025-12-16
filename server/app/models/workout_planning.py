@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, T
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from typing import Dict, Any
-from .base import Base
+from app.database.database import Base
 
 # Association table for workout templates and exercises
 template_exercises = Table(

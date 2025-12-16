@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .base import Base
+from app.database.database import Base
 
 # Association table for friends
 friendship = Table(
