@@ -35,11 +35,14 @@ jobs:
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
         echo "$HOME/.local/bin" >> $GITHUB_PATH
+        # ensure poetry is on PATH for the remainder of the job
+        export PATH="$HOME/.local/bin:$PATH"
 
     - name: Install server dependencies
       run: |
         cd server
-        poetry install
+        # do not attempt to install the project package root (project has no packages entry)
+        poetry install --no-root
 
     - name: Run server tests
       run: |

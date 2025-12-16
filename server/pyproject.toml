@@ -3,6 +3,7 @@ name = "fitness-tracker-server"
 version = "0.1.0"
 description = "Fitness Tracker Backend Server"
 authors = ["Your Name <your.email@example.com>"]
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.9"
