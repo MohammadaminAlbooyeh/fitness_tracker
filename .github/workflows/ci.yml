@@ -24,31 +24,46 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pypoetry
+        key: ${{ runner.os }}-poetry-${{ hashFiles('server/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
     - name: Install Poetry
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
         echo "$HOME/.local/bin" >> $GITHUB_PATH
-        # ensure poetry is on PATH for the remainder of the job
         export PATH="$HOME/.local/bin:$PATH"
+        poetry --version
 
     - name: Install server dependencies
       run: |
         cd server
-        # do not attempt to install the project package root (project has no packages entry)
         poetry install --no-root
 
-    - name: Install email-validator in poetry env
+    - name: Wait for Postgres
       run: |
-        cd server
-        # ensure email-validator is available for pydantic email types
-        poetry run pip install email-validator
+        echo "Waiting for Postgres to become available..."
+        for i in {1..30}; do
+          if command -v pg_isready >/dev/null 2>&1; then
+            pg_isready -h localhost -p 5432 -U postgres && break
+          else
+            nc -z localhost 5432 && break
+          fi
+          echo "Postgres not ready yet (attempt $i/30). Sleeping 2s..."
+          sleep 2
+        done
 
     - name: Run server tests
       run: |
@@ -61,6 +76,14 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
+
+    - name: Cache npm dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-npm-${{ hashFiles('client/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
 
     - name: Install client dependencies
       run: |
@@ -83,9 +106,19 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Deploy to production
+    - name: Deploy to production server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        SERVER_PATH: ${{ secrets.SERVER_PATH }}
       run: |
-        echo "Deploy to production server"
-        # Add your deployment commands here
+        echo "$SSH_PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        rsync -avz -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" ./server/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH/server/
+        rsync -avz -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" ./client/dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH/client/
+        rm private_key.pem
+        echo "Deployment completed!"
