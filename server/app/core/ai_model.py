@@ -83,7 +83,7 @@ class AIModel:
             'feedback': feedback
         }
     
-    def _process_frames(self, frames: List[np.ndarray]) -> Dict[str, Any]:
+    def _process_frames(self, frames: List[Any]) -> Dict[str, Any]:
         """Process video frames to analyze form"""
         # For demonstration, returning mock results
         return {
