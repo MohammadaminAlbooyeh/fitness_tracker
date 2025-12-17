@@ -1,7 +1,6 @@
 from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 from app.database.database import Base
-from .achievements import user_achievements
 
 class User(Base):
     __tablename__ = "users"
@@ -18,7 +17,8 @@ class User(Base):
     workout_logs = relationship("WorkoutLog", back_populates="user")
     
     # Gamification relationships
-    achievements = relationship("Achievement", secondary=user_achievements, back_populates="users")
+    achievements = relationship("Achievement", back_populates="user")
+    user_achievements = relationship("UserAchievement", back_populates="user")
     streak = relationship("UserStreak", back_populates="user", uselist=False)
     points = relationship("UserPoints", back_populates="user", uselist=False)
     

@@ -39,7 +39,8 @@ jobs:
     - name: Install server dependencies
       run: |
         cd server
-        poetry install --no-root
+        poetry install --no-root --with dev
+      continue-on-error: false
 
     - name: Run server tests
       run: |
