@@ -12,8 +12,15 @@ from ..models import models
 
 load_dotenv()
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing - try to initialize bcrypt safely
+try:
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__default_rounds=12)
+    # Test the context to ensure it works
+    test_hash = pwd_context.hash("test")
+except Exception as e:
+    # Fallback to a simpler context if bcrypt fails
+    print(f"Bcrypt initialization failed: {e}, using fallback")
+    pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 # JWT configuration
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here")
@@ -26,6 +33,8 @@ def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
+    # Truncate password to 72 bytes to comply with bcrypt limit
+    password = password[:72] if len(password.encode('utf-8')) > 72 else password
     return pwd_context.hash(password)
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):

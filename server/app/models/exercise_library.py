@@ -48,6 +48,8 @@ class Exercise(Base):
     equipment = relationship("Equipment", secondary=exercise_equipment)
     muscles = relationship("Muscle", secondary=exercise_muscles)
     creator = relationship("User", back_populates="custom_exercises")
+    workout_exercises = relationship("WorkoutExercise", back_populates="exercise")
+    form_checks = relationship("FormCheck", back_populates="exercise")
 
 class Equipment(Base):
     __tablename__ = 'equipment'
@@ -59,7 +61,7 @@ class Equipment(Base):
     image_url = Column(String(255))
 
     # Relationships
-    exercises = relationship("Exercise", secondary=exercise_equipment)
+    exercises = relationship("Exercise", secondary=exercise_equipment, overlaps="equipment")
 
 class Muscle(Base):
     __tablename__ = 'muscles'
@@ -71,7 +73,7 @@ class Muscle(Base):
     image_url = Column(String(255))
 
     # Relationships
-    exercises = relationship("Exercise", secondary=exercise_muscles)
+    exercises = relationship("Exercise", secondary=exercise_muscles, overlaps="muscles")
 
 class ExerciseProgress(Base):
     __tablename__ = 'exercise_progress'

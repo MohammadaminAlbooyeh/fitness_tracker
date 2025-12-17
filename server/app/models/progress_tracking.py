@@ -14,7 +14,7 @@ class MeasurementType(str, enum.Enum):
     THIGHS = 'thighs'
     CUSTOM = 'custom'
 
-class UserMeasurement(Base):
+class Measurement(Base):
     __tablename__ = 'user_measurements'
 
     id = Column(Integer, primary_key=True)
@@ -29,21 +29,8 @@ class UserMeasurement(Base):
     # Relationships
     user = relationship("User", back_populates="measurements")
 
-class ProgressPhoto(Base):
-    __tablename__ = 'progress_photos'
-
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    photo_url = Column(String(255), nullable=False)
-    photo_type = Column(String(20), nullable=False)  # front, side, back
-    date = Column(DateTime, default=datetime.utcnow)
-    notes = Column(String(500))
-    measurements = Column(JSON)  # Optional associated measurements
-
-    # Relationships
-    user = relationship("User", back_populates="progress_photos")
-
 # Note: Achievement and UserAchievement models are defined in achievements.py
+# Note: ProgressPhoto model is defined in progress_photos.py
 
 class PerformanceMetric(Base):
     __tablename__ = 'performance_metrics'

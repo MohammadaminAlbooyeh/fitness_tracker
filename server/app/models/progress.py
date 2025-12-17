@@ -29,16 +29,3 @@ class BodyMeasurement(Base):
     
     # Relationships
     user = relationship("User", back_populates="body_measurements")
-
-class ProgressPhoto(Base):
-    __tablename__ = "progress_photos"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    date = Column(DateTime, default=datetime.utcnow)
-    photo_url = Column(String)  # URL to stored photo
-    category = Column(String)  # e.g., 'front', 'back', 'side'
-    notes = Column(String, nullable=True)
-    
-    # Relationships
-    user = relationship("User", back_populates="progress_photos")

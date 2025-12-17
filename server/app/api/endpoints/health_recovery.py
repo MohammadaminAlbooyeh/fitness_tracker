@@ -2,9 +2,9 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
-from app.db.session import get_db
-from app.core.security import get_current_user
-from app.schemas.health_recovery import (
+from ...database.database import get_db
+from ...utils.auth import get_current_user
+from ...schemas.health_recovery import (
     SleepDataCreate,
     SleepData,
     RecoveryMetricsCreate,
@@ -18,14 +18,14 @@ from app.schemas.health_recovery import (
     RecoveryStatistics,
     HealthStatistics
 )
-from app.models.health_recovery import (
+from ...models.health_recovery import (
     SleepData as SleepDataModel,
     RecoveryMetrics as RecoveryMetricsModel,
     HealthMetrics as HealthMetricsModel,
     HealthDevice as HealthDeviceModel
 )
-from app.core.health_integration import HealthDeviceManager
-from app.utils.statistics import calculate_statistics
+from ...core.health_integration import HealthDeviceManager
+from ...utils.statistics import get_sleep_statistics, get_recovery_statistics, get_health_statistics
 from sqlalchemy import func
 
 router = APIRouter()
@@ -69,7 +69,7 @@ async def get_sleep_statistics(
     """Get sleep statistics for a user"""
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days)
-    return calculate_statistics.get_sleep_statistics(
+    return get_sleep_statistics(
         current_user.id, start_date, end_date, db
     )
 
@@ -113,7 +113,7 @@ async def get_recovery_statistics(
     """Get recovery statistics for a user"""
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days)
-    return calculate_statistics.get_recovery_statistics(
+    return get_recovery_statistics(
         current_user.id, start_date, end_date, db
     )
 
@@ -157,7 +157,7 @@ async def get_health_statistics(
     """Get health statistics for a user"""
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days)
-    return calculate_statistics.get_health_statistics(
+    return get_health_statistics(
         current_user.id, start_date, end_date, db
     )
 

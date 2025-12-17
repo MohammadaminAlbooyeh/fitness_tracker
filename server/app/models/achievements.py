@@ -16,6 +16,7 @@ class Achievement(Base):
     date_earned = Column(DateTime, default=datetime.utcnow)
     
     user = relationship("User", back_populates="achievements")
+    posts = relationship("Post", back_populates="achievement")
 
 class UserAchievement(Base):
     __tablename__ = "user_achievements"

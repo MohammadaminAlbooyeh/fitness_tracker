@@ -33,7 +33,7 @@ class Measurement(MeasurementBase):
         orm_mode = True
 
 class ProgressPhotoBase(BaseModel):
-    photo_type: str = Field(..., regex='^(front|side|back)$')
+    photo_type: str = Field(..., pattern='^(front|side|back)$')
     notes: Optional[str] = None
     measurements: Optional[Dict[str, Any]] = None
 

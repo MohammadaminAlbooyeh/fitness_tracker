@@ -36,7 +36,7 @@ class ExerciseBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = None
     instructions: Optional[str] = None
-    difficulty_level: str = Field(..., regex='^(beginner|intermediate|advanced)$')
+    difficulty_level: str = Field(..., pattern='^(beginner|intermediate|advanced)$')
     category: str
     video_url: Optional[HttpUrl] = None
     thumbnail_url: Optional[HttpUrl] = None

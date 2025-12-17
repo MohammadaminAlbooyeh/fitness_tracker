@@ -1,6 +1,39 @@
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel
+from enum import Enum
+
+class FormCheckStatus(str, Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+class FeedbackSeverity(str, Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+class FormFeedbackItem(BaseModel):
+    message: str
+    suggestion: str
+    severity: FeedbackSeverity
+
+class FormCheckResult(BaseModel):
+    id: str
+    user_id: int
+    exercise_id: int
+    video_url: str
+    status: FormCheckStatus
+    score: Optional[float] = None
+    analysis: Optional[dict] = None
+    feedback: Optional[List[FormFeedbackItem]] = None
+    error: Optional[str] = None
+
+class RecommendationFilter(BaseModel):
+    difficulty: Optional[str] = None
+    duration: Optional[int] = None
+    equipment: Optional[List[str]] = None
 
 class AIModelBase(BaseModel):
     name: str

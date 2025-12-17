@@ -16,6 +16,7 @@ class Workout(Base):
     user = relationship("User", back_populates="workouts")
     exercises = relationship("WorkoutExercise", back_populates="workout")
     workout_logs = relationship("WorkoutLog", back_populates="workout")
+    posts = relationship("Post", back_populates="workout")
 
 class WorkoutExercise(Base):
     __tablename__ = "workout_exercises"

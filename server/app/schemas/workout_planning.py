@@ -28,7 +28,7 @@ class WorkoutTemplateResponse(WorkoutTemplateCreate):
 
 class ReminderCreate(BaseModel):
     reminder_time: datetime
-    notification_type: str = Field(..., regex='^(email|push|sms)$')
+    notification_type: str = Field(..., pattern='^(email|push|sms)$')
 
 class ScheduledWorkoutCreate(BaseModel):
     template_id: int

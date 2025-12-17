@@ -7,7 +7,6 @@ from app.routes import auth, workouts, exercise_library, workout_planning, gamif
 from app.api.endpoints import smart_features, health_recovery
 
 # Create database tables
-engine.connect()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Fitness Tracker API")

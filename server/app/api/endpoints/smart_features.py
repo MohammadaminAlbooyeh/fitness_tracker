@@ -1,12 +1,19 @@
 import os
-import cv2
-import numpy as np
+try:
+    import cv2
+    import numpy as np
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
+    cv2 = None
+    np = None
+
 from typing import List, Optional
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
-from app.db.session import get_db
-from app.core.security import get_current_user
-from app.schemas.smart_features import (
+from ...database.database import get_db
+from ...utils.auth import get_current_user
+from ...schemas.smart_features import (
     FormCheckResult,
     WorkoutRecommendation,
     RecommendationFilter,
@@ -14,9 +21,9 @@ from app.schemas.smart_features import (
     FeedbackSeverity,
     FormFeedbackItem
 )
-from app.models.smart_features import FormCheck, WorkoutRecommendation as WorkoutRecommendationModel
-from app.core.ai_model import AIModel
-from app.utils.storage import save_video, get_video_url
+from ...models.smart_features import FormCheck, WorkoutRecommendation as WorkoutRecommendationModel
+from ...core.ai_model import AIModel
+from ...utils.storage import save_video, get_video_url
 
 router = APIRouter()
 ai_model = AIModel()

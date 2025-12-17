@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from ..database.database import get_db
-from ..models.gamification import Achievement, UserStreak, UserPoints
+from ..models.achievements import Achievement
+from ..models.gamification import UserStreak, UserPoints
 from ..models.user import User
 from ..utils.auth import get_current_user
 from datetime import datetime, timedelta

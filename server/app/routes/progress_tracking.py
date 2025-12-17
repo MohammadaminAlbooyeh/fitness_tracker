@@ -6,12 +6,10 @@ from ..database.database import get_db
 from ..utils.auth import get_current_user
 from ..models.user import User
 from ..models.progress_tracking import (
-    UserMeasurement,
-    ProgressPhoto,
-    Achievement,
-    UserAchievement,
+    Measurement,
     PerformanceMetric
 )
+from ..models.achievements import Achievement, UserAchievement
 from ..schemas.progress_tracking import (
     MeasurementCreate,
     Measurement,
@@ -35,7 +33,7 @@ async def create_measurement(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    db_measurement = UserMeasurement(
+    db_measurement = Measurement(
         user_id=current_user.id,
         **measurement.dict()
     )
@@ -52,16 +50,16 @@ async def list_measurements(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    query = db.query(UserMeasurement).filter(UserMeasurement.user_id == current_user.id)
+    query = db.query(Measurement).filter(Measurement.user_id == current_user.id)
     
     if measurement_type:
-        query = query.filter(UserMeasurement.measurement_type == measurement_type)
+        query = query.filter(Measurement.measurement_type == measurement_type)
     if start_date:
-        query = query.filter(UserMeasurement.date >= start_date)
+        query = query.filter(Measurement.date >= start_date)
     if end_date:
-        query = query.filter(UserMeasurement.date <= end_date)
+        query = query.filter(Measurement.date <= end_date)
     
-    return query.order_by(UserMeasurement.date.desc()).all()
+    return query.order_by(Measurement.date.desc()).all()
 
 # Progress photos endpoints
 @router.post("/photos/", response_model=ProgressPhotoSchema)
@@ -175,19 +173,19 @@ async def get_progress_summary(
     
     # Get recent measurements grouped by type
     measurements = {}
-    measurement_types = db.query(UserMeasurement.measurement_type)\
-        .filter(UserMeasurement.user_id == current_user.id)\
+    measurement_types = db.query(Measurement.measurement_type)\
+        .filter(Measurement.user_id == current_user.id)\
         .distinct()\
         .all()
     
     for (m_type,) in measurement_types:
-        measurements[m_type] = db.query(UserMeasurement)\
+        measurements[m_type] = db.query(Measurement)\
             .filter(
-                UserMeasurement.user_id == current_user.id,
-                UserMeasurement.measurement_type == m_type,
-                UserMeasurement.date >= start_date
+                Measurement.user_id == current_user.id,
+                Measurement.measurement_type == m_type,
+                Measurement.date >= start_date
             )\
-            .order_by(UserMeasurement.date.desc())\
+            .order_by(Measurement.date.desc())\
             .all()
     
     # Get recent photos
