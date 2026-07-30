@@ -1,37 +1,39 @@
 package com.ecommerce.review.controller;
 
-import com.ecommerce.review.entity.Review;
-import com.ecommerce.review.repository.ReviewRepository;
+import com.ecommerce.review.dto.ReviewRequest;
+import com.ecommerce.review.dto.ReviewResponse;
+import com.ecommerce.review.service.ReviewService;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
 
-    private final ReviewRepository repository;
+    private final ReviewService service;
 
-    public ReviewController(ReviewRepository repository) {
-        this.repository = repository;
+    public ReviewController(ReviewService service) {
+        this.service = service;
     }
 
     @GetMapping("/product/{productId}")
-    public List<Review> getByProduct(@PathVariable Long productId) {
-        return repository.findByProductId(productId);
+    public List<ReviewResponse> getByProduct(@PathVariable Long productId) {
+        return service.getReviewsByProductId(productId);
     }
 
     @GetMapping("/user/{userId}")
-    public List<Review> getByUser(@PathVariable Long userId) {
-        return repository.findByUserId(userId);
+    public List<ReviewResponse> getByUser(@PathVariable Long userId) {
+        return service.getReviewsByUserId(userId);
     }
 
     @PostMapping
-    public Review create(@RequestBody Review review) {
-        review.setCreatedAt(LocalDateTime.now());
-        review.setUpdatedAt(LocalDateTime.now());
-        return repository.save(review);
+    public ReviewResponse create(@RequestBody ReviewRequest request) {
+        return service.createReview(request);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteReview(id);
     }
 }

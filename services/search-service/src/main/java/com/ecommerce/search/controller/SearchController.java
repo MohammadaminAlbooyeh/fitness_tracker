@@ -1,31 +1,34 @@
 package com.ecommerce.search.controller;
 
-import com.ecommerce.search.entity.SearchQuery;
-import com.ecommerce.search.repository.SearchQueryRepository;
+import com.ecommerce.search.dto.SearchQueryRequest;
+import com.ecommerce.search.dto.SearchQueryResponse;
+import com.ecommerce.search.service.SearchService;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/search")
 public class SearchController {
 
-    private final SearchQueryRepository repository;
+    private final SearchService service;
 
-    public SearchController(SearchQueryRepository repository) {
-        this.repository = repository;
+    public SearchController(SearchService service) {
+        this.service = service;
     }
 
     @GetMapping("/queries")
-    public List<SearchQuery> getQueries(@RequestParam Long userId) {
-        return repository.findByUserId(userId);
+    public List<SearchQueryResponse> getQueries(@RequestParam Long userId) {
+        return service.getQueriesByUserId(userId);
     }
 
     @PostMapping("/queries")
-    public SearchQuery saveQuery(@RequestBody SearchQuery query) {
-        query.setCreatedAt(LocalDateTime.now());
-        query.setUpdatedAt(LocalDateTime.now());
-        return repository.save(query);
+    public SearchQueryResponse saveQuery(@RequestBody SearchQueryRequest request) {
+        return service.saveQuery(request);
+    }
+
+    @GetMapping("/queries/all")
+    public List<SearchQueryResponse> getAllQueries() {
+        return service.getAllQueries();
     }
 }
