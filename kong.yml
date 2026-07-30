@@ -1,0 +1,148 @@
+_format_version: "3.0"
+services:
+  - name: user-service
+    url: http://user-service:8000
+    routes:
+      - name: user-routes
+        paths:
+          - /api/users
+          - /api/auth
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: product-service
+    url: http://product-service:8000
+    routes:
+      - name: product-routes
+        paths:
+          - /api/products
+          - /api/categories
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: cart-service
+    url: http://cart-service:8000
+    routes:
+      - name: cart-routes
+        paths:
+          - /api/cart
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: order-service
+    url: http://order-service:8000
+    routes:
+      - name: order-routes
+        paths:
+          - /api/orders
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: payment-service
+    url: http://payment-service:8081
+    routes:
+      - name: payment-routes
+        paths:
+          - /api/payments
+        methods:
+          - GET
+          - POST
+          - PUT
+
+  - name: inventory-service
+    url: http://inventory-service:8082
+    routes:
+      - name: inventory-routes
+        paths:
+          - /api/inventory
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: search-service
+    url: http://search-service:8083
+    routes:
+      - name: search-routes
+        paths:
+          - /api/search
+        methods:
+          - GET
+          - POST
+
+  - name: review-service
+    url: http://review-service:8084
+    routes:
+      - name: review-routes
+        paths:
+          - /api/reviews
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: seller-service
+    url: http://seller-service:8085
+    routes:
+      - name: seller-routes
+        paths:
+          - /api/sellers
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+  - name: notification-service
+    url: http://notification-service:8000
+    routes:
+      - name: notification-routes
+        paths:
+          - /api/notifications
+        methods:
+          - GET
+          - POST
+
+  - name: analytics-service
+    url: http://analytics-service:8000
+    routes:
+      - name: analytics-routes
+        paths:
+          - /api/analytics
+        methods:
+          - GET
+          - POST
+
+  - name: behavior-tracking-service
+    url: http://behavior-tracking-service:8000
+    routes:
+      - name: behavior-tracking-routes
+        paths:
+          - /api/behavior
+        methods:
+          - GET
+          - POST
+
+  - name: recommendation-service
+    url: http://recommendation-service:8000
+    routes:
+      - name: recommendation-routes
+        paths:
+          - /api/recommendations
+        methods:
+          - GET
+          - POST

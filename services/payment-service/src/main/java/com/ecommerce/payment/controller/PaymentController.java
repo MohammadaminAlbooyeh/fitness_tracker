@@ -1,37 +1,44 @@
 package com.ecommerce.payment.controller;
 
-import com.ecommerce.payment.entity.Payment;
-import com.ecommerce.payment.repository.PaymentRepository;
+import com.ecommerce.payment.dto.PaymentRequest;
+import com.ecommerce.payment.dto.PaymentResponse;
+import com.ecommerce.payment.service.PaymentService;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/payments")
 public class PaymentController {
 
-    private final PaymentRepository repository;
+    private final PaymentService service;
 
-    public PaymentController(PaymentRepository repository) {
-        this.repository = repository;
+    public PaymentController(PaymentService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public List<Payment> getAll() {
-        return repository.findAll();
+    public List<PaymentResponse> getAll() {
+        return service.getPaymentsByOrderId(null);
     }
 
     @GetMapping("/{id}")
-    public Payment getById(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow();
+    public PaymentResponse getById(@PathVariable Long id) {
+        return service.getPaymentById(id);
     }
 
     @PostMapping
-    public Payment create(@RequestBody Payment payment) {
-        payment.setCreatedAt(LocalDateTime.now());
-        payment.setUpdatedAt(LocalDateTime.now());
-        return repository.save(payment);
+    public PaymentResponse create(@RequestBody PaymentRequest request) {
+        return service.createPayment(request);
+    }
+
+    @PutMapping("/{id}/status")
+    public PaymentResponse updateStatus(@PathVariable Long id, @RequestParam String status) {
+        return service.updatePaymentStatus(id, status);
+    }
+
+    @GetMapping("/order/{orderId}")
+    public List<PaymentResponse> getByOrderId(@PathVariable Long orderId) {
+        return service.getPaymentsByOrderId(orderId);
     }
 }
