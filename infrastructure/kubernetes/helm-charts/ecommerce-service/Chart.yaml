@@ -1,0 +1,15 @@
+apiVersion: v2
+name: ecommerce-service
+description: A Helm chart for ecommerce microservices
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - ecommerce
+  - microservice
+  - kubernetes
+home: https://github.com/amin-ahsan/scalable-ecommerce-platform
+sources:
+  - https://github.com/amin-ahsan/scalable-ecommerce-platform
+maintainers:
+  - name: ecommerce-platform

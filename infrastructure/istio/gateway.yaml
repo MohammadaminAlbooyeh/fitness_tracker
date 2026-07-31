@@ -1,0 +1,143 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: ecommerce-gateway
+  namespace: ecommerce
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*.ecommerce.local"
+      tls:
+        mode: SIMPLE
+        credentialName: ecommerce-tls
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - "*.ecommerce.local"
+      tls:
+        mode: SIMPLE
+        credentialName: ecommerce-tls
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: ecommerce-services
+  namespace: ecommerce
+spec:
+  hosts:
+    - "*.ecommerce.local"
+  gateways:
+    - ecommerce-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /api/users
+      route:
+        - destination:
+            host: user-service.ecommerce.svc.cluster.local
+            port:
+              number: 8001
+    - match:
+        - uri:
+            prefix: /api/products
+      route:
+        - destination:
+            host: product-service.ecommerce.svc.cluster.local
+            port:
+              number: 8002
+    - match:
+        - uri:
+            prefix: /api/cart
+      route:
+        - destination:
+            host: cart-service.ecommerce.svc.cluster.local
+            port:
+              number: 8003
+    - match:
+        - uri:
+            prefix: /api/orders
+      route:
+        - destination:
+            host: order-service.ecommerce.svc.cluster.local
+            port:
+              number: 8004
+    - match:
+        - uri:
+            prefix: /api/payments
+      route:
+        - destination:
+            host: payment-service.ecommerce.svc.cluster.local
+            port:
+              number: 8081
+    - match:
+        - uri:
+            prefix: /api/inventory
+      route:
+        - destination:
+            host: inventory-service.ecommerce.svc.cluster.local
+            port:
+              number: 8082
+    - match:
+        - uri:
+            prefix: /api/search
+      route:
+        - destination:
+            host: search-service.ecommerce.svc.cluster.local
+            port:
+              number: 8083
+    - match:
+        - uri:
+            prefix: /api/reviews
+      route:
+        - destination:
+            host: review-service.ecommerce.svc.cluster.local
+            port:
+              number: 8084
+    - match:
+        - uri:
+            prefix: /api/sellers
+      route:
+        - destination:
+            host: seller-service.ecommerce.svc.cluster.local
+            port:
+              number: 8085
+    - match:
+        - uri:
+            prefix: /api/notifications
+      route:
+        - destination:
+            host: notification-service.ecommerce.svc.cluster.local
+            port:
+              number: 8005
+    - match:
+        - uri:
+            prefix: /api/analytics
+      route:
+        - destination:
+            host: analytics-service.ecommerce.svc.cluster.local
+            port:
+              number: 8006
+    - match:
+        - uri:
+            prefix: /api/behavior
+      route:
+        - destination:
+            host: behavior-tracking-service.ecommerce.svc.cluster.local
+            port:
+              number: 8007
+    - match:
+        - uri:
+            prefix: /api/recommendations
+      route:
+        - destination:
+            host: recommendation-service.ecommerce.svc.cluster.local
+            port:
+              number: 8008

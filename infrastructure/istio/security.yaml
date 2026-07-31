@@ -1,0 +1,39 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: ecommerce-authz
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: ecommerce
+  rules:
+    - from:
+        - source:
+            principals: ["cluster.local/ns/ecommerce/sa/ecommerce-sa"]
+      to:
+        - operation:
+            methods: ["GET", "POST", "PUT", "DELETE"]
+            paths: ["/api/*"]
+    - from:
+        - source:
+            httpRequest:
+              headers:
+                Authorization: "Bearer *
+      to:
+        - operation:
+            methods: ["POST", "PUT", "DELETE"]
+            paths: ["/api/*"]
+---
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: ecommerce-jwt
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: ecommerce
+  jwtRules:
+    - issuer: "auth.ecommerce.local"
+      jwksUri: "http://user-service.ecommerce.svc.cluster.local:8000/.well-known/jwks.json"

@@ -1,36 +1,49 @@
 package com.ecommerce.seller.controller;
 
-import com.ecommerce.seller.entity.Seller;
-import com.ecommerce.seller.repository.SellerRepository;
+import com.ecommerce.seller.dto.SellerRequest;
+import com.ecommerce.seller.dto.SellerResponse;
+import com.ecommerce.seller.service.SellerService;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/sellers")
 public class SellerController {
 
-    private final SellerRepository repository;
+    private final SellerService service;
 
-    public SellerController(SellerRepository repository) {
-        this.repository = repository;
+    public SellerController(SellerService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public List<Seller> getAllActive() {
-        return repository.findByIsActiveTrue();
+    public List<SellerResponse> getAllActive() {
+        return service.getAllActiveSellers();
     }
 
     @GetMapping("/{id}")
-    public Seller getById(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow();
+    public SellerResponse getById(@PathVariable Long id) {
+        return service.getSellerById(id);
+    }
+
+    @GetMapping("/user/{userId}")
+    public SellerResponse getByUserId(@PathVariable Long userId) {
+        return service.getSellerByUserId(userId);
     }
 
     @PostMapping
-    public Seller create(@RequestBody Seller seller) {
-        seller.setCreatedAt(LocalDateTime.now());
-        seller.setUpdatedAt(LocalDateTime.now());
-        return repository.save(seller);
+    public SellerResponse create(@RequestBody SellerRequest request) {
+        return service.createSeller(request);
+    }
+
+    @PutMapping("/{id}")
+    public SellerResponse update(@PathVariable Long id, @RequestBody SellerRequest request) {
+        return service.updateSeller(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public SellerResponse deactivate(@PathVariable Long id) {
+        return service.deactivateSeller(id);
     }
 }

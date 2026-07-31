@@ -1,0 +1,44 @@
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: kafka-broker
+  namespace: ecommerce
+spec:
+  hosts:
+    - msk-broker.ecommerce.local
+  ports:
+    - number: 9092
+      name: kafka
+      protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: DNS
+---
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: postgres-external
+  namespace: ecommerce
+spec:
+  hosts:
+    - postgres.ecommerce.local
+  ports:
+    - number: 5432
+      name: postgres
+      protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: DNS
+---
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: redis-external
+  namespace: ecommerce
+spec:
+  hosts:
+    - redis.ecommerce.local
+  ports:
+    - number: 6379
+      name: redis
+      protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: DNS
