@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  title: Seller Service API
+  description: Seller management microservice
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/sellers
+    description: Kong Gateway
+
+paths:
+  /sellers:
+    get:
+      summary: List all active sellers
+      operationId: listSellers
+      responses:
+        '200':
+          description: List of sellers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SellerResponse'
+
+    post:
+      summary: Create a new seller
+      operationId: createSeller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SellerRequest'
+      responses:
+        '201':
+          description: Seller created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SellerResponse'
+
+  /sellers/{id}:
+    get:
+      summary: Get seller by ID
+      operationId: getSeller
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Seller found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SellerResponse'
+        '404':
+          description: Seller not found
+
+    put:
+      summary: Update seller
+      operationId: updateSeller
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SellerRequest'
+      responses:
+        '200':
+          description: Seller updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SellerResponse'
+
+    delete:
+      summary: Deactivate a seller (soft delete)
+      operationId: deactivateSeller
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Seller deactivated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SellerResponse'
+
+  /sellers/user/{userId}:
+    get:
+      summary: Get seller by user ID
+      operationId: getSellerByUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Seller found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SellerResponse'
+        '404':
+          description: Seller not found
+
+components:
+  schemas:
+    SellerRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        storeName:
+          type: string
+        description:
+          type: string
+
+    SellerResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        storeName:
+          type: string
+        description:
+          type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

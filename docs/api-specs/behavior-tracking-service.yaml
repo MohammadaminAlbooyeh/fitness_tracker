@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: Behavior Tracking Service API
+  description: User behavior event tracking microservice
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/behavior
+    description: Kong Gateway
+
+paths:
+  /behaviors:
+    post:
+      summary: Track a user behavior event
+      operationId: createBehavior
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserBehaviorCreate'
+      responses:
+        '201':
+          description: Behavior tracked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBehavior'
+
+  /behaviors/{user_id}:
+    get:
+      summary: Get behavior events by user ID
+      operationId: getBehaviors
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of behavior events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserBehavior'
+
+components:
+  schemas:
+    UserBehavior:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        product_id:
+          type: integer
+        event_type:
+          type: string
+        metadata:
+          type: string
+          nullable: true
+
+    UserBehaviorCreate:
+      type: object
+      required: [user_id, product_id, event_type]
+      properties:
+        user_id:
+          type: integer
+        product_id:
+          type: integer
+        event_type:
+          type: string
+        metadata:
+          type: string
+          nullable: true

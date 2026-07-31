@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Analytics Service API
+  description: Sales analytics and reporting microservice
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/analytics
+    description: Kong Gateway
+
+paths:
+  /analytics/sales:
+    get:
+      summary: Get sales analytics
+      operationId: getSalesAnalytics
+      parameters:
+        - name: skip
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        '200':
+          description: List of sales analytics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SalesAnalytics'
+
+    post:
+      summary: Create sales analytics record
+      operationId: createSalesAnalytics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalesAnalyticsCreate'
+      responses:
+        '201':
+          description: Analytics record created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesAnalytics'
+
+components:
+  schemas:
+    SalesAnalytics:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+        total_revenue:
+          type: number
+        total_orders:
+          type: integer
+        average_order_value:
+          type: number
+
+    SalesAnalyticsCreate:
+      type: object
+      required: [date, total_revenue, total_orders, average_order_value]
+      properties:
+        date:
+          type: string
+        total_revenue:
+          type: number
+        total_orders:
+          type: integer
+        average_order_value:
+          type: number

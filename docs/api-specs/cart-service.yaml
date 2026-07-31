@@ -1,0 +1,113 @@
+openapi: 3.0.0
+info:
+  title: Cart Service API
+  description: Shopping cart management microservice
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/cart
+    description: Kong Gateway
+
+paths:
+  /carts/:
+    post:
+      summary: Create a new cart for a user
+      operationId: createCart
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Cart created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /carts/{user_id}:
+    get:
+      summary: Get cart by user ID
+      operationId: getCart
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cart found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: Cart not found
+
+  /carts/{user_id}/items:
+    post:
+      summary: Add item to cart
+      operationId: addItem
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItemCreate'
+      responses:
+        '201':
+          description: Item added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        is_active:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        cart_id:
+          type: integer
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+        price:
+          type: number
+
+    CartItemCreate:
+      type: object
+      required: [product_id, quantity, price]
+      properties:
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+        price:
+          type: number

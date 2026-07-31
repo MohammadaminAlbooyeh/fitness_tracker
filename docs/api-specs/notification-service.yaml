@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  title: Notification Service API
+  description: User notification microservice
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/notifications
+    description: Kong Gateway
+
+paths:
+  /notifications:
+    post:
+      summary: Create a new notification
+      operationId: createNotification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationCreate'
+      responses:
+        '201':
+          description: Notification created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+
+  /notifications/{user_id}:
+    get:
+      summary: Get notifications by user ID
+      operationId: getNotifications
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+
+components:
+  schemas:
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        title:
+          type: string
+        message:
+          type: string
+        is_read:
+          type: boolean
+        notification_type:
+          type: string
+
+    NotificationCreate:
+      type: object
+      required: [user_id, title, message]
+      properties:
+        user_id:
+          type: integer
+        title:
+          type: string
+        message:
+          type: string
+        notification_type:
+          type: string
+          default: general

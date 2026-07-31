@@ -1,8 +1,13 @@
 package com.ecommerce.payment.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class PaymentResponse {
     private Long id;
     private Long orderId;

@@ -1,0 +1,116 @@
+openapi: 3.0.0
+info:
+  title: Review Service API
+  description: Product reviews and ratings microservice
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/reviews
+    description: Kong Gateway
+
+paths:
+  /reviews:
+    post:
+      summary: Create a new review
+      operationId: createReview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+      responses:
+        '201':
+          description: Review created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewResponse'
+
+  /reviews/product/{productId}:
+    get:
+      summary: Get reviews by product ID
+      operationId: getReviewsByProduct
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewResponse'
+
+  /reviews/user/{userId}:
+    get:
+      summary: Get reviews by user ID
+      operationId: getReviewsByUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewResponse'
+
+  /reviews/{id}:
+    delete:
+      summary: Delete a review
+      operationId: deleteReview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Review deleted
+
+components:
+  schemas:
+    ReviewRequest:
+      type: object
+      properties:
+        productId:
+          type: integer
+        userId:
+          type: integer
+        rating:
+          type: integer
+        comment:
+          type: string
+
+    ReviewResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        productId:
+          type: integer
+        userId:
+          type: integer
+        rating:
+          type: integer
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

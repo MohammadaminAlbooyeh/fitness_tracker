@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: Recommendation Service API
+  description: Product recommendation microservice
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/recommendations
+    description: Kong Gateway
+
+paths:
+  /recommendations:
+    post:
+      summary: Create a recommendation
+      operationId: createRecommendation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendationCreate'
+      responses:
+        '201':
+          description: Recommendation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recommendation'
+
+  /recommendations/{user_id}:
+    get:
+      summary: Get recommendations by user ID
+      operationId: getRecommendations
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recommendation'
+
+components:
+  schemas:
+    Recommendation:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        product_id:
+          type: integer
+        score:
+          type: number
+        reason:
+          type: string
+          nullable: true
+
+    RecommendationCreate:
+      type: object
+      required: [user_id, product_id, score]
+      properties:
+        user_id:
+          type: integer
+        product_id:
+          type: integer
+        score:
+          type: number
+        reason:
+          type: string
+          nullable: true
