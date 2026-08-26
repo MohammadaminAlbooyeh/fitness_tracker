@@ -1,11 +1,15 @@
 """Order service FastAPI app."""
+import logging
 
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared_lib.database import get_db
 from shared_lib.security import get_current_user
+from shared_lib.messaging import publish_order_created
 from app import models, schemas, crud
+
+logger = logging.getLogger("order-service")
 
 app = FastAPI(title="Order Service", version="1.0.0")
 
@@ -16,7 +20,24 @@ async def create_order(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    return await crud.create_order(db, order)
+    db_order = await crud.create_order(db, order)
+    # Publish the canonical order.created event -> inventory reserves stock,
+    # notification-service notifies the user. Best-effort: a transient Kafka
+    # outage must not fail the order that is already persisted.
+    try:
+        await publish_order_created(
+            order_id=db_order.id,
+            user_id=db_order.user_id,
+            status=db_order.status.value if hasattr(db_order.status, "value") else str(db_order.status),
+            total_amount=db_order.total_amount,
+            items=[
+                {"product_id": i.product_id, "quantity": i.quantity, "price": i.price}
+                for i in order.items
+            ],
+        )
+    except Exception:  # noqa: BLE001
+        logger.warning("Failed to publish order.created event for order %s", db_order.id, exc_info=True)
+    return db_order
 
 
 @app.get("/orders/", response_model=list[schemas.Order])

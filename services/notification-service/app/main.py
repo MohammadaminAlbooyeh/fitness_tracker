@@ -1,13 +1,39 @@
 """Notification service FastAPI app."""
+import asyncio
+import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from shared_lib.config import settings
 from shared_lib.database import get_db
 from shared_lib.security import get_current_user
 from app import models, schemas, crud
 
-app = FastAPI(title="Notification Service", version="1.0.0")
+logger = logging.getLogger("notification-service")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Start the Kafka consumer (order.created -> Notification) only when
+    # explicitly enabled, so broker-less runs and unit tests stay stable.
+    consumer_task = None
+    if settings.kafka_consumer_enabled:
+        from app.events import consume_forever
+
+        consumer_task = asyncio.create_task(consume_forever())
+        logger.info("order.created Kafka consumer started")
+    yield
+    if consumer_task is not None:
+        consumer_task.cancel()
+        try:
+            await consumer_task
+        except asyncio.CancelledError:
+            pass
+
+
+app = FastAPI(title="Notification Service", version="1.0.0", lifespan=lifespan)
 
 
 @app.post("/notifications/", response_model=schemas.Notification, status_code=201)

@@ -6,11 +6,12 @@ metadata:
   labels:
     app: ecommerce
 data:
-  DATABASE_HOST: "postgres
+  DATABASE_HOST: "postgres"
   DATABASE_PORT: "5432"
   DATABASE_NAME: "ecommerce"
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
   KAFKA_BROKERS: "msk-broker:9092"
+  KAFKA_CONSUMER_ENABLED: "true"
   KONG_HOST: "kong-proxy.kong.svc.cluster.local"
   KONG_PORT: "8000"

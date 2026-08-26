@@ -12,4 +12,7 @@ class UserBehavior(Base, TimestampMixin):
     user_id: Mapped[int] = mapped_column(index=True, nullable=False)
     product_id: Mapped[int] = mapped_column(nullable=False, index=True)
     event_type: Mapped[str] = mapped_column(String(50), nullable=False)
-    metadata: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # "context" is the Python attribute; the physical column keeps the original
+    # "metadata" name so existing data is preserved. The Python name must differ
+    # because "metadata" is reserved by the SQLAlchemy Declarative API.
+    context: Mapped[str | None] = mapped_column("metadata", Text, nullable=True)

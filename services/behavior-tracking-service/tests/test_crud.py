@@ -11,7 +11,7 @@ async def test_create_behavior(db_session: AsyncSession):
         user_id=1,
         product_id=100,
         event_type="view",
-        metadata="page_duration=30s"
+        context="page_duration=30s"
     )
     behavior = await crud.create_behavior(db_session, behavior_data)
     assert behavior.id is not None
@@ -23,13 +23,13 @@ async def test_create_behavior(db_session: AsyncSession):
 @pytest.mark.asyncio
 async def test_get_behaviors(db_session: AsyncSession):
     behavior1 = schemas.UserBehaviorCreate(
-        user_id=1, product_id=1, event_type="view", metadata=None
+        user_id=1, product_id=1, event_type="view", context=None
     )
     behavior2 = schemas.UserBehaviorCreate(
-        user_id=1, product_id=2, event_type="click", metadata="button=add_to_cart"
+        user_id=1, product_id=2, event_type="click", context="button=add_to_cart"
     )
     behavior3 = schemas.UserBehaviorCreate(
-        user_id=2, product_id=1, event_type="view", metadata=None
+        user_id=2, product_id=1, event_type="view", context=None
     )
     await crud.create_behavior(db_session, behavior1)
     await crud.create_behavior(db_session, behavior2)

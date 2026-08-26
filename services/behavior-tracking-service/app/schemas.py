@@ -7,7 +7,7 @@ class UserBehaviorBase(BaseModel):
     user_id: int
     product_id: int
     event_type: str
-    metadata: str | None = None
+    context: str | None = None
 
 
 class UserBehaviorCreate(UserBehaviorBase):

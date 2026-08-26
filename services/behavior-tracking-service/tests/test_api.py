@@ -8,7 +8,7 @@ async def test_create_behavior_endpoint(client):
         "user_id": 1,
         "product_id": 100,
         "event_type": "view",
-        "metadata": "page_duration=30s"
+        "context": "page_duration=30s"
     })
     assert response.status_code == 201
     data = response.json()
@@ -23,7 +23,7 @@ async def test_get_behaviors_endpoint(client):
         "user_id": 5,
         "product_id": 1,
         "event_type": "click",
-        "metadata": None
+        "context": None
     })
     response = await client.get("/behaviors/5")
     assert response.status_code == 200

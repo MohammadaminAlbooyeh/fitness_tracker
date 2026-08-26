@@ -19,6 +19,22 @@ services:
     ports:
       - "6379:6379"
 
+  kafka:
+    image: bitnami/kafka:3.7
+    restart: unless-stopped
+    environment:
+      KAFKA_CFG_NODE_ID: "0"
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+      KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+    ports:
+      - "9092:9092"
+
   kong:
     image: kong:3.5
     restart: unless-stopped
@@ -76,8 +92,10 @@ services:
       - "8004:8000"
     depends_on:
       - postgres
+      - kafka
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/ecommerce
+      KAFKA_BROKERS: kafka:9092
 
   payment-service:
     build:
@@ -98,10 +116,12 @@ services:
       - "8082:8082"
     depends_on:
       - postgres
+      - kafka
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
+      KAFKA_BROKERS: kafka:9092
 
   search-service:
     build:
@@ -146,8 +166,11 @@ services:
       - "8005:8000"
     depends_on:
       - postgres
+      - kafka
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/ecommerce
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CONSUMER_ENABLED: "true"
 
   analytics-service:
     build:

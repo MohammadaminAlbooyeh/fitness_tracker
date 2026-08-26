@@ -1,0 +1,80 @@
+"""Alembic migration environment for the order-service.
+
+Resolves the target database from the ``DATABASE_URL`` environment variable
+(falling back to ``shared_lib`` settings), imports the service models so their
+tables register on the shared ``Base.metadata``, and runs migrations against an
+async engine.
+"""
+
+import asyncio
+import os
+import sys
+from logging.config import fileConfig
+from pathlib import Path
+
+from alembic import context
+from sqlalchemy import pool
+
+# Make the service package (``app``) and the shared lib importable regardless of
+# the directory from which alembic is invoked.
+# <service>/migrations/env.py
+SERVICE_DIR = Path(__file__).resolve().parents[1]
+REPO_DIR = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(SERVICE_DIR))
+sys.path.insert(0, str(REPO_DIR / "shared" / "python-common-lib"))
+
+from shared_lib.base_model import Base  # noqa: E402
+from shared_lib.config import settings  # noqa: E402
+
+config = context.config
+
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+# Register this service's tables on Base.metadata (must be imported before
+# ``target_metadata`` is used in autogenerate).
+import app.models  # noqa: E402,F401
+
+target_metadata = Base.metadata
+
+
+def get_url() -> str:
+    return os.environ.get("DATABASE_URL") or settings.database_url
+
+
+def run_migrations_offline() -> None:
+    """Run migrations in 'offline' mode (emit SQL, no DB connection)."""
+    context.configure(
+        url=get_url(),
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+    )
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def do_run_migrations(connection) -> None:
+    context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+async def run_async_migrations() -> None:
+    from sqlalchemy.ext.asyncio import create_async_engine
+
+    connectable = create_async_engine(get_url(), poolclass=pool.NullPool)
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
+    await connectable.dispose()
+
+
+def run_migrations_online() -> None:
+    asyncio.run(run_async_migrations())
+
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    run_migrations_online()

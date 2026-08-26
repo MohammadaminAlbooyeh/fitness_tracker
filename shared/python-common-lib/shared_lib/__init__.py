@@ -9,6 +9,13 @@ from shared_lib.security import (
     oauth2_scheme,
     verify_password,
 )
+from shared_lib.messaging import (
+    EVENT_ORDER_CREATED,
+    TOPIC_ORDER_CREATED,
+    KafkaPublisher,
+    build_order_created_event,
+    publish_order_created,
+)
 
 __all__ = [
     "Base",
@@ -24,4 +31,9 @@ __all__ = [
     "get_password_hash",
     "oauth2_scheme",
     "verify_password",
+    "EVENT_ORDER_CREATED",
+    "TOPIC_ORDER_CREATED",
+    "KafkaPublisher",
+    "build_order_created_event",
+    "publish_order_created",
 ]
