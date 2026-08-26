@@ -4,16 +4,25 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared_lib.database import get_db
+from shared_lib.security import get_current_user
 from app import models, schemas, crud
 
 app = FastAPI(title="Notification Service", version="1.0.0")
 
 
 @app.post("/notifications/", response_model=schemas.Notification, status_code=201)
-async def create_notification(notification: schemas.NotificationCreate, db: AsyncSession = Depends(get_db)):
+async def create_notification(
+    notification: schemas.NotificationCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
     return await crud.create_notification(db, notification)
 
 
 @app.get("/notifications/{user_id}", response_model=list[schemas.Notification])
-async def get_notifications(user_id: int, db: AsyncSession = Depends(get_db)):
+async def get_notifications(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
     return await crud.get_notifications(db, user_id)

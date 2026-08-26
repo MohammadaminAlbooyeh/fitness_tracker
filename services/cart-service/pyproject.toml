@@ -1,4 +1,4 @@
-"""Cart service dependencies."""
+# Cart service dependencies.
 
 [project]
 name = "cart-service"

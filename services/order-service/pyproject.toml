@@ -1,4 +1,4 @@
-"""Order service dependencies."""
+# Order service dependencies.
 
 [project]
 name = "order-service"

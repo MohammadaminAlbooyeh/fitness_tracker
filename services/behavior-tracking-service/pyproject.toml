@@ -1,4 +1,4 @@
-"""Behavior tracking service dependencies."""
+# Behavior tracking service dependencies.
 
 [project]
 name = "behavior-tracking-service"

@@ -65,6 +65,13 @@ async def app():
         async with async_session() as session:
             yield session
     fastapi_app.dependency_overrides[get_db] = override_get_db
+
+    from shared_lib.security import get_current_user
+
+    async def override_get_current_user() -> dict:
+        return {"sub": "test@example.com"}
+
+    fastapi_app.dependency_overrides[get_current_user] = override_get_current_user
     yield fastapi_app
     fastapi_app.dependency_overrides.clear()
 

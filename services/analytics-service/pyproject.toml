@@ -1,4 +1,4 @@
-"""Analytics service dependencies."""
+# Analytics service dependencies.
 
 [project]
 name = "analytics-service"

@@ -1,4 +1,4 @@
-"""Product service dependencies."""
+# Product service dependencies.
 
 [project]
 name = "product-service"

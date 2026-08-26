@@ -1,4 +1,4 @@
-"""Notification service dependencies."""
+# Notification service dependencies.
 
 [project]
 name = "notification-service"

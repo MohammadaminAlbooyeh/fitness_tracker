@@ -1,4 +1,4 @@
-"""Recommendation service dependencies."""
+# Recommendation service dependencies.
 
 [project]
 name = "recommendation-service"
