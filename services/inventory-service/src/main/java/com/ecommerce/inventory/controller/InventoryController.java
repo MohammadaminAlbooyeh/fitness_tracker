@@ -17,6 +17,11 @@ public class InventoryController {
         this.service = service;
     }
 
+    @GetMapping("/health")
+    public java.util.Map<String, String> health() {
+        return java.util.Map.of("status", "healthy", "service", "inventory-service");
+    }
+
     @GetMapping
     public List<InventoryResponse> getAll() {
         return service.getAllInventory();

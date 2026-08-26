@@ -17,6 +17,11 @@ public class SellerController {
         this.service = service;
     }
 
+    @GetMapping("/health")
+    public java.util.Map<String, String> health() {
+        return java.util.Map.of("status", "healthy", "service", "seller-service");
+    }
+
     @GetMapping
     public List<SellerResponse> getAllActive() {
         return service.getAllActiveSellers();

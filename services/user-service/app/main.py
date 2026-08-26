@@ -1,5 +1,10 @@
 """Main FastAPI application."""
 
+import logging
+from contextlib import asynccontextmanager
+from pathlib import Path
+from subprocess import run
+
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +13,35 @@ from shared_lib.database import get_db
 from shared_lib.security import create_access_token, get_current_user, verify_password
 from app import models, schemas, crud
 
-app = FastAPI(title="User Service", version="1.0.0")
+logger = logging.getLogger("user-service")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    _run_migrations()
+    yield
+
+
+app = FastAPI(title="User Service", version="1.0.0", lifespan=lifespan)
+
+
+def _run_migrations() -> None:
+    migrations_dir = Path(__file__).resolve().parent.parent / "migrations"
+    result = run(
+        ["python", "-m", "alembic", "upgrade", "head"],
+        cwd=migrations_dir,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        logger.error("Alembic migration failed: %s", result.stderr)
+    else:
+        logger.info("Alembic migrations applied")
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "user-service"}
 
 
 @app.post("/token")

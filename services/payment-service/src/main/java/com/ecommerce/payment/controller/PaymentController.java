@@ -17,6 +17,11 @@ public class PaymentController {
         this.service = service;
     }
 
+    @GetMapping("/health")
+    public java.util.Map<String, String> health() {
+        return java.util.Map.of("status", "healthy", "service", "payment-service");
+    }
+
     @GetMapping
     public List<PaymentResponse> getAll() {
         return service.getPaymentsByOrderId(null);

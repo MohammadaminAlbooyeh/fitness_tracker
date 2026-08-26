@@ -5,11 +5,3 @@ metadata:
   namespace: ecommerce
 resources:
   - ../../base
-patches:
-  - target:
-      kind: Deployment
-      name: ecommerce-service
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 3

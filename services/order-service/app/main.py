@@ -1,5 +1,8 @@
 """Order service FastAPI app."""
 import logging
+from contextlib import asynccontextmanager
+from pathlib import Path
+from subprocess import run
 
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +14,33 @@ from app import models, schemas, crud
 
 logger = logging.getLogger("order-service")
 
-app = FastAPI(title="Order Service", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    _run_migrations()
+    yield
+
+
+app = FastAPI(title="Order Service", version="1.0.0", lifespan=lifespan)
+
+
+def _run_migrations() -> None:
+    migrations_dir = Path(__file__).resolve().parent.parent / "migrations"
+    result = run(
+        ["python", "-m", "alembic", "upgrade", "head"],
+        cwd=migrations_dir,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        logger.error("Alembic migration failed: %s", result.stderr)
+    else:
+        logger.info("Alembic migrations applied")
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "order-service"}
 
 
 @app.post("/orders/", response_model=schemas.Order, status_code=201)

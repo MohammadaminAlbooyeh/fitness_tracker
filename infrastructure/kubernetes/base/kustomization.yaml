@@ -9,3 +9,29 @@ resources:
   - secret.yaml
   - rbac.yaml
   - postgres-redis.yaml
+  - user-service-deployment.yaml
+  - user-service-service.yaml
+  - product-service-deployment.yaml
+  - product-service-service.yaml
+  - cart-service-deployment.yaml
+  - cart-service-service.yaml
+  - order-service-deployment.yaml
+  - order-service-service.yaml
+  - notification-service-deployment.yaml
+  - notification-service-service.yaml
+  - analytics-service-deployment.yaml
+  - analytics-service-service.yaml
+  - behavior-tracking-service-deployment.yaml
+  - behavior-tracking-service-service.yaml
+  - recommendation-service-deployment.yaml
+  - recommendation-service-service.yaml
+  - payment-service-deployment.yaml
+  - payment-service-service.yaml
+  - inventory-service-deployment.yaml
+  - inventory-service-service.yaml
+  - search-service-deployment.yaml
+  - search-service-service.yaml
+  - review-service-deployment.yaml
+  - review-service-service.yaml
+  - seller-service-deployment.yaml
+  - seller-service-service.yaml

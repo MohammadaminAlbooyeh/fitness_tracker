@@ -2,6 +2,8 @@
 import asyncio
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
+from subprocess import run
 
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,8 +18,7 @@ logger = logging.getLogger("notification-service")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Start the Kafka consumer (order.created -> Notification) only when
-    # explicitly enabled, so broker-less runs and unit tests stay stable.
+    _run_migrations()
     consumer_task = None
     if settings.kafka_consumer_enabled:
         from app.events import consume_forever
@@ -34,6 +35,25 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Notification Service", version="1.0.0", lifespan=lifespan)
+
+
+def _run_migrations() -> None:
+    migrations_dir = Path(__file__).resolve().parent.parent / "migrations"
+    result = run(
+        ["python", "-m", "alembic", "upgrade", "head"],
+        cwd=migrations_dir,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        logger.error("Alembic migration failed: %s", result.stderr)
+    else:
+        logger.info("Alembic migrations applied")
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "notification-service"}
 
 
 @app.post("/notifications/", response_model=schemas.Notification, status_code=201)

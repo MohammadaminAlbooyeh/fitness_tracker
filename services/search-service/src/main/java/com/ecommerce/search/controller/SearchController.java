@@ -17,6 +17,11 @@ public class SearchController {
         this.service = service;
     }
 
+    @GetMapping("/health")
+    public java.util.Map<String, String> health() {
+        return java.util.Map.of("status", "healthy", "service", "search-service");
+    }
+
     @GetMapping("/queries")
     public List<SearchQueryResponse> getQueries(@RequestParam Long userId) {
         return service.getQueriesByUserId(userId);
