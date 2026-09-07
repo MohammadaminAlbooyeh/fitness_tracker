@@ -36,6 +36,10 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.ecommerce</groupId>
             <artifactId>java-common-lib</artifactId>
             <version>0.1.0</version>

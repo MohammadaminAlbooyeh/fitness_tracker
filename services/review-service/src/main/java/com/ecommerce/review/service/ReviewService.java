@@ -3,6 +3,7 @@ package com.ecommerce.review.service;
 import com.ecommerce.review.dto.ReviewRequest;
 import com.ecommerce.review.dto.ReviewResponse;
 import com.ecommerce.review.entity.Review;
+import com.ecommerce.review.event.ReviewEventPublisher;
 import com.ecommerce.review.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +15,11 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewRepository repository;
+    private final ReviewEventPublisher eventPublisher;
 
-    public ReviewService(ReviewRepository repository) {
+    public ReviewService(ReviewRepository repository, ReviewEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     public ReviewResponse createReview(ReviewRequest request) {
@@ -29,6 +32,7 @@ public class ReviewService {
         review.setUpdatedAt(LocalDateTime.now());
 
         Review saved = repository.save(review);
+        eventPublisher.publishReviewCreated(saved);
         return mapToResponse(saved);
     }
 

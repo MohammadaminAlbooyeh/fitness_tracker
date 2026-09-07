@@ -3,6 +3,7 @@ package com.ecommerce.review.service;
 import com.ecommerce.review.dto.ReviewRequest;
 import com.ecommerce.review.dto.ReviewResponse;
 import com.ecommerce.review.entity.Review;
+import com.ecommerce.review.event.ReviewEventPublisher;
 import com.ecommerce.review.repository.ReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,9 @@ class ReviewServiceTest {
 
     @Mock
     private ReviewRepository repository;
+
+    @Mock
+    private ReviewEventPublisher eventPublisher;
 
     @InjectMocks
     private ReviewService service;

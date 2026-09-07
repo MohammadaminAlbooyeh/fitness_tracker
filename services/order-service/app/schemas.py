@@ -34,3 +34,7 @@ class Order(OrderBase):
     id: int
     status: str
     items: list[OrderItem] = []
+
+
+class OrderStatusUpdate(BaseModel):
+    status: str

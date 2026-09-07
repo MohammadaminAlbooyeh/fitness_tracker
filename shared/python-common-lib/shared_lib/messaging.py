@@ -5,6 +5,18 @@ Canonical topics used across the platform:
 - ``order.created``: published by order-service after an order is placed.
   Consumed by inventory-service (reserve stock) and notification-service
   (notify the user).
+- ``order.shipped`` / ``order.cancelled``: published by order-service on the
+  corresponding status transition. Consumed by notification-service.
+- ``payment.completed``: published by payment-service (Java/Spring Kafka)
+  once a payment settles. Consumed by order-service to confirm the order.
+- ``inventory.updated``: published by inventory-service (Java/Spring Kafka)
+  whenever stock levels change. No Python consumer yet; reserved for
+  analytics-service.
+- ``review.created``: published by review-service (Java/Spring Kafka) after a
+  review is saved. No Python consumer yet; reserved for
+  analytics-service/recommendation-service.
+
+See docs/event-catalog.md for the full producer/consumer matrix.
 
 The published event payload is JSON and is intentionally language-agnostic so
 Python producers/consumers and Java (Spring Kafka) consumers can interoperate.
@@ -23,8 +35,15 @@ from shared_lib.config import settings
 logger = logging.getLogger("shared_lib.messaging")
 
 TOPIC_ORDER_CREATED = "order.created"
+TOPIC_ORDER_SHIPPED = "order.shipped"
+TOPIC_ORDER_CANCELLED = "order.cancelled"
+TOPIC_PAYMENT_COMPLETED = "payment.completed"
+TOPIC_INVENTORY_UPDATED = "inventory.updated"
+TOPIC_REVIEW_CREATED = "review.created"
 
 EVENT_ORDER_CREATED = "order.created"
+EVENT_ORDER_SHIPPED = "order.shipped"
+EVENT_ORDER_CANCELLED = "order.cancelled"
 
 
 def build_order_created_event(
@@ -54,6 +73,18 @@ def build_order_created_event(
                 }
                 for item in items
             ],
+        },
+    }
+
+
+def build_order_status_event(event_name: str, order_id: int, user_id: int, status: str) -> dict[str, Any]:
+    """Build the canonical payload for order status-transition events."""
+    return {
+        "event": event_name,
+        "order": {
+            "order_id": order_id,
+            "user_id": user_id,
+            "status": status,
         },
     }
 
@@ -101,6 +132,14 @@ class KafkaPublisher:
             value=event,
         )
 
+    async def publish_order_shipped(self, order_id: int, user_id: int, status: str) -> None:
+        event = build_order_status_event(EVENT_ORDER_SHIPPED, order_id, user_id, status)
+        await self.publish(TOPIC_ORDER_SHIPPED, key=f"order:{order_id}", value=event)
+
+    async def publish_order_cancelled(self, order_id: int, user_id: int, status: str) -> None:
+        event = build_order_status_event(EVENT_ORDER_CANCELLED, order_id, user_id, status)
+        await self.publish(TOPIC_ORDER_CANCELLED, key=f"order:{order_id}", value=event)
+
 
 async def publish_order_created(
     order_id: int,
@@ -111,3 +150,13 @@ async def publish_order_created(
 ) -> None:
     """One-shot convenience wrapper used by order-service."""
     await KafkaPublisher().publish_order_created(order_id, user_id, status, total_amount, items)
+
+
+async def publish_order_shipped(order_id: int, user_id: int, status: str) -> None:
+    """One-shot convenience wrapper used by order-service."""
+    await KafkaPublisher().publish_order_shipped(order_id, user_id, status)
+
+
+async def publish_order_cancelled(order_id: int, user_id: int, status: str) -> None:
+    """One-shot convenience wrapper used by order-service."""
+    await KafkaPublisher().publish_order_cancelled(order_id, user_id, status)

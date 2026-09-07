@@ -3,6 +3,7 @@ package com.ecommerce.inventory.service;
 import com.ecommerce.inventory.dto.InventoryRequest;
 import com.ecommerce.inventory.dto.InventoryResponse;
 import com.ecommerce.inventory.entity.Inventory;
+import com.ecommerce.inventory.event.InventoryEventPublisher;
 import com.ecommerce.inventory.repository.InventoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 public class InventoryService {
 
     private final InventoryRepository repository;
+    private final InventoryEventPublisher eventPublisher;
 
-    public InventoryService(InventoryRepository repository) {
+    public InventoryService(InventoryRepository repository, InventoryEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     public InventoryResponse createInventory(InventoryRequest request) {
@@ -63,6 +66,7 @@ public class InventoryService {
         inventory.setQuantity(newQuantity);
         inventory.setUpdatedAt(LocalDateTime.now());
         Inventory updated = repository.save(inventory);
+        eventPublisher.publishInventoryUpdated(updated);
         return mapToResponse(updated);
     }
 
@@ -78,6 +82,7 @@ public class InventoryService {
         inventory.setReservedQuantity(inventory.getReservedQuantity() + quantity);
         inventory.setUpdatedAt(LocalDateTime.now());
         Inventory updated = repository.save(inventory);
+        eventPublisher.publishInventoryUpdated(updated);
         return mapToResponse(updated);
     }
 
@@ -92,6 +97,7 @@ public class InventoryService {
         inventory.setReservedQuantity(inventory.getReservedQuantity() - quantity);
         inventory.setUpdatedAt(LocalDateTime.now());
         Inventory updated = repository.save(inventory);
+        eventPublisher.publishInventoryUpdated(updated);
         return mapToResponse(updated);
     }
 

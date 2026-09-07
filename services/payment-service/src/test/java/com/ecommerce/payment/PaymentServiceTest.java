@@ -3,6 +3,7 @@ package com.ecommerce.payment.service;
 import com.ecommerce.payment.dto.PaymentRequest;
 import com.ecommerce.payment.dto.PaymentResponse;
 import com.ecommerce.payment.entity.Payment;
+import com.ecommerce.payment.event.PaymentEventPublisher;
 import com.ecommerce.payment.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,9 @@ class PaymentServiceTest {
 
     @Mock
     private PaymentRepository repository;
+
+    @Mock
+    private PaymentEventPublisher eventPublisher;
 
     @InjectMocks
     private PaymentService service;

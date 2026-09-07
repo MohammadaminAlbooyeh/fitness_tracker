@@ -3,6 +3,7 @@ package com.ecommerce.payment.service;
 import com.ecommerce.payment.dto.PaymentRequest;
 import com.ecommerce.payment.dto.PaymentResponse;
 import com.ecommerce.payment.entity.Payment;
+import com.ecommerce.payment.event.PaymentEventPublisher;
 import com.ecommerce.payment.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,11 @@ import java.util.stream.Collectors;
 public class PaymentService {
 
     private final PaymentRepository repository;
+    private final PaymentEventPublisher eventPublisher;
 
-    public PaymentService(PaymentRepository repository) {
+    public PaymentService(PaymentRepository repository, PaymentEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     public PaymentResponse createPayment(PaymentRequest request) {
@@ -53,6 +56,9 @@ public class PaymentService {
         payment.setStatus(status);
         payment.setUpdatedAt(LocalDateTime.now());
         Payment updated = repository.save(payment);
+        if ("COMPLETED".equalsIgnoreCase(status)) {
+            eventPublisher.publishPaymentCompleted(updated);
+        }
         return mapToResponse(updated);
     }
 

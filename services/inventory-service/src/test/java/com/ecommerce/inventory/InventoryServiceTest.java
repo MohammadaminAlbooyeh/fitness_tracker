@@ -3,6 +3,7 @@ package com.ecommerce.inventory.service;
 import com.ecommerce.inventory.dto.InventoryRequest;
 import com.ecommerce.inventory.dto.InventoryResponse;
 import com.ecommerce.inventory.entity.Inventory;
+import com.ecommerce.inventory.event.InventoryEventPublisher;
 import com.ecommerce.inventory.repository.InventoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,9 @@ class InventoryServiceTest {
 
     @Mock
     private InventoryRepository repository;
+
+    @Mock
+    private InventoryEventPublisher eventPublisher;
 
     @InjectMocks
     private InventoryService service;

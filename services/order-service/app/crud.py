@@ -3,7 +3,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.models import Order, OrderItem
+from app.models import Order, OrderItem, OrderStatus
 from app.schemas import OrderCreate, OrderItemCreate
 
 
@@ -25,6 +25,16 @@ async def create_order(db: AsyncSession, order: OrderCreate) -> Order:
     for item in order.items:
         db_item = OrderItem(order_id=db_order.id, **item.model_dump())
         db.add(db_item)
+    await db.commit()
+    await db.refresh(db_order)
+    return db_order
+
+
+async def update_order_status(db: AsyncSession, order_id: int, status: OrderStatus) -> Order | None:
+    db_order = await get_order(db, order_id)
+    if db_order is None:
+        return None
+    db_order.status = status
     await db.commit()
     await db.refresh(db_order)
     return db_order

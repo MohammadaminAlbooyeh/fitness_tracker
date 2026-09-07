@@ -1,4 +1,5 @@
 """Order service FastAPI app."""
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -7,10 +8,12 @@ from subprocess import run
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from shared_lib.config import settings
 from shared_lib.database import get_db
 from shared_lib.security import get_current_user
-from shared_lib.messaging import publish_order_created
+from shared_lib.messaging import publish_order_created, publish_order_shipped, publish_order_cancelled
 from app import models, schemas, crud
+from app.models import OrderStatus
 
 logger = logging.getLogger("order-service")
 
@@ -18,7 +21,19 @@ logger = logging.getLogger("order-service")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     _run_migrations()
+    consumer_task = None
+    if settings.kafka_consumer_enabled:
+        from app.events import consume_forever
+
+        consumer_task = asyncio.create_task(consume_forever())
+        logger.info("payment.completed Kafka consumer started")
     yield
+    if consumer_task is not None:
+        consumer_task.cancel()
+        try:
+            await consumer_task
+        except asyncio.CancelledError:
+            pass
 
 
 app = FastAPI(title="Order Service", version="1.0.0", lifespan=lifespan)
@@ -89,4 +104,33 @@ async def read_order(
     order = await crud.get_order(db, order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+    return order
+
+
+@app.patch("/orders/{order_id}/status", response_model=schemas.Order)
+async def update_order_status(
+    order_id: int,
+    status_update: schemas.OrderStatusUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    try:
+        new_status = OrderStatus(status_update.status)
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Invalid status: {status_update.status}")
+
+    order = await crud.update_order_status(db, order_id, new_status)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    # Best-effort: notify downstream consumers of the status transition.
+    # A transient Kafka outage must not fail a status update that already
+    # persisted successfully.
+    try:
+        if new_status == OrderStatus.SHIPPED:
+            await publish_order_shipped(order.id, order.user_id, new_status.value)
+        elif new_status == OrderStatus.CANCELLED:
+            await publish_order_cancelled(order.id, order.user_id, new_status.value)
+    except Exception:  # noqa: BLE001
+        logger.warning("Failed to publish status event for order %s", order.id, exc_info=True)
     return order
