@@ -19,6 +19,11 @@ build/
 .pytest_cache/
 .coverage
 htmlcov/
+poetry.lock
+
+# Test artifacts
+test_svc.db
+*.db
 
 # IDE
 .idea/

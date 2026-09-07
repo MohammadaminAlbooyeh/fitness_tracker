@@ -96,10 +96,10 @@ jobs:
         run: |
           cd services/${{ matrix.service }}
           poetry install --no-root
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
           cd services/${{ matrix.service }}
-          poetry run pytest tests/ -v --tb=short
+          poetry run pytest tests/ -v --tb=short --cov=app --cov-report=xml --cov-report=term
 
   test-shared-lib:
     name: Test Python Shared Library
@@ -130,10 +130,10 @@ jobs:
         run: |
           cd shared/python-common-lib
           poetry install
-      - name: Run tests
+      - name: Run shared lib tests with coverage
         run: |
           cd shared/python-common-lib
-          poetry run pytest tests/ -v --tb=short
+          poetry run pytest tests/ -v --tb=short --cov=shared_lib --cov-report=xml --cov-report=term
 
   lint-java:
     name: Lint Java Services
