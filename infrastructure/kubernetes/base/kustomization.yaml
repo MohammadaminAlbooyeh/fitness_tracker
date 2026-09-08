@@ -6,7 +6,7 @@ metadata:
 resources:
   - namespace.yaml
   - configmap.yaml
-  - secret.yaml
+  - sealed-secret.yaml
   - rbac.yaml
   - postgres-redis.yaml
   - user-service-deployment.yaml

@@ -25,7 +25,7 @@ A microservices-based e-commerce platform with 14 services implemented in Python
 - Kong API Gateway
 - PostgreSQL
 - Redis
-- Kafka (MSK) - only `order.created` is currently published/consumed (order-service → inventory-service, notification-service)
+- Kafka (MSK) - asynchronous order, payment, inventory, and review events; see [the event catalog](docs/event-catalog.md)
 
 ## System Architecture Diagram
 
@@ -61,9 +61,13 @@ flowchart TB
     JV -->|Spring Data JPA| PG
     CS -->|cart sessions| REDIS[(Redis)]
 
-    OS -->|publish order.created| KAFKA[(Kafka / MSK)]
-    KAFKA -->|consume: reserveStock| INV
-    KAFKA -->|consume: create notification| NS
+    OS -->|publish order.created, shipped, cancelled| KAFKA[(Kafka / MSK)]
+    PAY -->|publish payment.completed| KAFKA
+    INV -->|publish inventory.updated| KAFKA
+    REV -->|publish review.created| KAFKA
+    KAFKA -->|consume order/payment events| INV
+    KAFKA -->|consume order events| NS
+    KAFKA -->|consume payment.completed| OS
 ```
 
 Plain-text version (same picture, no renderer required):
@@ -95,8 +99,8 @@ Plain-text version (same picture, no renderer required):
         |  recommendation-service    |            |
         +----------------------------+            |
              |              |                      |
-   asyncpg   |     cart     |   order.created       | JPA
-             |   sessions   |   (Kafka publish)     |
+   asyncpg   |     cart     | order/payment/inventory| JPA
+             |   sessions   |  /review events       |
              v              v                       v
        +-----------+  +-----------+          +--------------+
        | PostgreSQL|  |   Redis   |          |  PostgreSQL  |
@@ -106,10 +110,9 @@ Plain-text version (same picture, no renderer required):
                        +--------------+
                        |  Kafka (MSK) |
                        +--------------+
-                          |        |
-             consume:     |        |    consume:
-             reserveStock |        |    create notification
-                          v        v
+                          |        |        |
+             consume order/payment | consume order
+                          v        v        v
               +-------------------+  +-------------------------+
               | inventory-service |  |  notification-service    |
               +-------------------+  +-------------------------+

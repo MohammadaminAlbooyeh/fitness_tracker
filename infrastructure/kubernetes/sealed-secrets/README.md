@@ -32,30 +32,31 @@ kubectl create secret generic ecommerce-secrets \
 ### 2. Seal the secret
 
 ```bash
-kubeseal --format yaml < secret.yaml > sealed-secret.yaml
+kubeseal --format yaml < secret.yaml > ../base/sealed-secret.yaml
 ```
 
 ### 3. Commit the sealed secret
 
-Commit `sealed-secret.yaml` to git. The plaintext `secret.yaml` should be gitignored.
+Commit `../base/sealed-secret.yaml` to git. The plaintext `secret.yaml` must not be committed.
 
 ### 4. Deploy to cluster
 
 ```bash
-kubectl apply -f sealed-secret.yaml
+kubectl apply -f ../base/sealed-secret.yaml
 ```
 
 The Sealed Secrets controller will automatically decrypt and create the regular Secret in the cluster.
 
 ## Migration from plaintext secrets
 
-The current `infrastructure/kubernetes/base/secret.yaml` contains base64-encoded plaintext secrets. To migrate:
+The old `infrastructure/kubernetes/base/secret.yaml` contained base64-encoded plaintext secrets. The base Kustomization now references `infrastructure/kubernetes/base/sealed-secret.yaml`. To migrate:
 
 1. Install the Sealed Secrets controller in your cluster
 2. Install `kubeseal` CLI: https://github.com/bitnami-labs/sealed-secrets/releases
 3. Seal the existing secrets using the process above
-4. Replace `infrastructure/kubernetes/base/secret.yaml` with the sealed version
-5. Remove the plaintext secret from the repository
+4. Generate `infrastructure/kubernetes/base/sealed-secret.yaml` with `kubeseal`
+5. Verify the generated file contains `encryptedData`, not plaintext values
+6. Remove the temporary plaintext `secret.yaml`
 
 ## Rotating secrets
 
