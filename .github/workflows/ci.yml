@@ -99,7 +99,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd services/${{ matrix.service }}
-          poetry run pytest tests/ -v --tb=short --cov=app --cov-report=xml --cov-report=term
+          poetry run pytest tests/ -v --tb=short --cov=app --cov-report=xml --cov-report=term --cov-fail-under=60
 
   test-shared-lib:
     name: Test Python Shared Library
@@ -133,7 +133,7 @@ jobs:
       - name: Run shared lib tests with coverage
         run: |
           cd shared/python-common-lib
-          poetry run pytest tests/ -v --tb=short --cov=shared_lib --cov-report=xml --cov-report=term
+          poetry run pytest tests/ -v --tb=short --cov=shared_lib --cov-report=xml --cov-report=term --cov-fail-under=60
 
   lint-java:
     name: Lint Java Services
@@ -190,6 +190,10 @@ jobs:
         run: |
           cd services/${{ matrix.service }}
           mvn clean test -q
+      - name: Enforce JaCoCo coverage threshold
+        run: |
+          cd services/${{ matrix.service }}
+          mvn jacoco:check -q
 
   build-docker:
     name: Build Docker Images

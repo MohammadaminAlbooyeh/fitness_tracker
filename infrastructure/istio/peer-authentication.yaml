@@ -1,0 +1,32 @@
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: ecommerce-mtls
+  namespace: ecommerce
+spec:
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: payment-service-mtls
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: payment-service
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: inventory-service-mtls
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: inventory-service
+  mtls:
+    mode: STRICT
